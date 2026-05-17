@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+dist/
+dist-ssr/
+
+# Environment / secrets — NEVER commit real API keys
+dev-agent/.env
+.env
+.env.local
+.env.*.local
+
+# Dev tools
+.vite/
+*.local
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Python
+dev-agent/__pycache__/
+dev-agent/*.pyc
+dev-agent/.venv/
