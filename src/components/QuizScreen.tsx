@@ -3,8 +3,7 @@ import { questions } from '../data/questions';
 import {
   PageShell,
   Card,
-  OptionCard,
-  OptionCardContent,
+  Button,
   SectionLabel,
   Eyebrow,
   PageTitle,
@@ -71,27 +70,22 @@ export const QuizScreen: Component<QuizScreenProps> = (props) => {
 
         <CardDivider class="quiz-screen__divider" />
         <div class="quiz-screen__buttons">
-          <OptionCard
-            layout="row"
-            class="quiz-screen__button base-ui-button base-ui-button--secondary base-ui-button--default"
+          <Button
+            variant="secondary"
+            fullWidth
             disabled={props.currentQuestionIndex === 0}
             onClick={props.onPrev}
           >
-            <OptionCardContent title="Previous" showArrow={false} />
-          </OptionCard>
-          <OptionCard
-            layout="row"
-            class="quiz-screen__button base-ui-button base-ui-button--primary base-ui-button--default"
-            selected={isAnswered()}
+            Previous
+          </Button>
+          <Button
+            variant="primary"
+            fullWidth
             disabled={!isAnswered()}
             onClick={props.onNext}
           >
-            <OptionCardContent
-              title={isLast() ? 'Finish' : 'Next'}
-              description={isAnswered() ? undefined : 'Select an answer to continue'}
-              showArrow={false}
-            />
-          </OptionCard>
+            {isLast() ? 'Finish' : 'Next'}
+          </Button>
         </div>
       </Card>
     </PageShell>

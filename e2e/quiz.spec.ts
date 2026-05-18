@@ -42,7 +42,7 @@ test.describe('Marriage Quiz App', () => {
 
     // Verify results screen
     await expect(page.getByText('Quiz Completed')).toBeVisible();
-    await expect(page.getByText(/\d+\/\d+/)).toBeVisible();
+    await expect(page.getByText(/\d+\/\d+/).first()).toBeVisible();
   });
 
   test('should disable Next button until answer is selected', async ({ page }) => {
