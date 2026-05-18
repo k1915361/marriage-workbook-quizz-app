@@ -3,7 +3,7 @@
 > A quiz app based on **"The 7 Principles of Creation Marriage Enrichment Workbook"**  
 > by Stephen Stacey.
 
-Built with **SolidJS · Tailwind CSS v4 · Kobalte UI · Vite** — zero-budget,
+Built with **SolidJS · Base UI Solid · Vite** — zero-budget,
 fast, and fully accessible.
 
 ---

@@ -12,7 +12,7 @@ minimal, highly performant, and accessible stack.
 |---|---|---|
 | **UI Framework** | [SolidJS](https://www.solidjs.com/) | Fine-grained reactivity, no virtual DOM, tiny bundle |
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Utility-first, zero unused CSS in production |
-| **Accessible Primitives** | [Kobalte UI](https://kobalte.dev/) | Unstyled headless components (WAI-ARIA compliant) |
+| **Accessible Primitives** | [Base UI Solid](https://base-ui.com/) | Unstyled headless components (WAI-ARIA compliant) |
 | **Build Tool** | [Vite](https://vitejs.dev/) | esbuild-powered HMR, fastest dev loop |
 | **Language** | TypeScript (strict) | Type safety across data models and component contracts |
 | **Dev Agent** | Python + OpenRouter | Hermes-style agentic loop for coding assistance |
@@ -64,14 +64,12 @@ without recreating elements:
 | Screen switching | `<Switch>/<Match>` |
 | Lazy mounting | `<Lazy>` |
 
-### 5. Known Bug: Kobalte RadioGroup + `value={undefined}`
-> **Status: Fixed in `QuizScreen.tsx`**
+### 5. RadioGroup Empty Selection Handling
+> **Status: Preserved in `QuizScreen.tsx`**
 
-When `RadioGroup` receives `value={undefined}`, Kobalte treats the component as
-**uncontrolled** and keeps its previous internal selection. This caused a
-mismatch where the first option appeared selected (visually) on a new question
-but `isAnswered()` was still `false`, disabling the Next button until the user
-clicked a different option.
+The controlled `RadioGroup` receives `value=""` when no answer is selected.
+This keeps the visual radio state aligned with `isAnswered()` while navigating
+between questions.
 
 **Fix**: Pass `value=""` (empty string) when no answer is selected:
 
@@ -86,9 +84,9 @@ onChange={(val) => { if (val !== "") props.onSelectOption(parseInt(val)); }}
 
 ## Accessibility (a11y)
 
-- **RadioGroup**: Kobalte handles `role="radiogroup"`, `role="radio"`,
+- **RadioGroup**: Base UI Solid handles `role="radiogroup"`, `role="radio"`,
   `aria-checked`, and keyboard navigation (Arrow keys, Tab).
-- **Progress**: Kobalte `<Progress>` provides `role="progressbar"` with
+- **Progress**: Base UI Solid `<Progress>` provides `role="progressbar"` with
   `aria-valuenow` / `aria-valuemax`.
 - **Focus rings**: `focus-visible:ring-4` ensures keyboard focus is always
   visible, satisfying WCAG 2.1 AA 2.4.7.

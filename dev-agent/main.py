@@ -37,7 +37,7 @@ SYSTEM_PROMPT = f"""You are a Hermes-style autonomous development agent for the 
   "Marriage Enrichment Quiz App"  (marriage-workbook-quizz-app)
   Root: {PROJECT_ROOT}
 
-Stack: SolidJS · Tailwind CSS v4 · Kobalte UI · Vite · TypeScript
+Stack: SolidJS · Base UI Solid · Vite · TypeScript
 The project implements a quiz based on "The 7 Principles of Creation Marriage
 Enrichment Workbook" by Stephen Stacey.
 

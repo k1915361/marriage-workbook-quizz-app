@@ -1,16 +1,17 @@
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
-import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    solidPlugin()
-  ],
-  server: {
-    port: 3000,
-  },
-  build: {
-    target: 'esnext',
-  },
+export default defineConfig(() => {
+  const isGitHubPagesBuild = process.env.GITHUB_PAGES === 'true';
+
+  return {
+    base: isGitHubPagesBuild ? '/marriage-workbook-quizz-app/' : '/',
+    plugins: [solidPlugin()],
+    server: {
+      port: 3000,
+    },
+    build: {
+      target: 'esnext',
+    },
+  };
 });

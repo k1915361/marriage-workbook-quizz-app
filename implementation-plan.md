@@ -7,13 +7,22 @@ Feature roadmap and status tracker for the Marriage Enrichment Quiz App.
 ## ✅ Phase 1 — Core Quiz MVP (Complete)
 
 - [x] SolidJS + Vite + TypeScript project scaffold
-- [x] Tailwind CSS v4 + Kobalte UI integration
+- [x] Base UI Solid primitive integration
 - [x] 5 questions covering Principles 1–5
 - [x] `WelcomeScreen` → `QuizScreen` → `ResultsScreen` navigation
 - [x] Score calculation and tiered feedback (Strong / Growing / Reconnect)
 - [x] Progress bar (filled by answered questions)
 - [x] Accessible RadioGroup (keyboard nav, ARIA)
-- [x] **Bug Fix: Kobalte RadioGroup `value={undefined}` stale selection** — see [`architecture.md`](./architecture.md#5-known-bug-kobalte-radiogroup--valueundefined)
+- [x] **RadioGroup empty selection handling** — see [`architecture.md`](./architecture.md#5-radiogroup-empty-selection-handling)
+
+## 🚧 Current Work — Button-first UI Migration
+
+- Preparing the `Button` component integration in `src/components/ui/Button.tsx`
+- Goal: use Base UI Solid primitives while preserving the existing `variant`, `size`, and `fullWidth` API
+- Map props to existing CSS class tokens such as `button--primary`, `button--secondary`, `button--ghost`, and size classes
+- Keep the public `Button` component API stable so screens and helper components do not require import changes
+- Verify with unit tests in `src/components/ui/Button.test.tsx`
+- Also diagnosing the Playwright runner environment to ensure `npm run test:e2e` works after the button refactor
 
 ---
 
@@ -60,7 +69,7 @@ Feature roadmap and status tracker for the Marriage Enrichment Quiz App.
 
 | ID | Severity | Status | Description |
 |---|---|---|---|
-| BUG-001 | Medium | **Fixed** | Kobalte `RadioGroup`: `value={undefined}` keeps stale selection on question navigation, leaving "Next" disabled. Fixed by passing `value=""`. |
+| BUG-001 | Medium | **Fixed** | `RadioGroup`: empty selections are represented with `value=""` so question navigation does not keep stale selected state. |
 
 ---
 
