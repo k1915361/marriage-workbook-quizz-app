@@ -20,7 +20,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+
+    /* Workspace package resolution */
+    "paths": {
+      "@marriage-workbook/quiz-data": ["./packages/quiz-data/src/index.ts"],
+      "@marriage-workbook/quiz-engine": ["./packages/quiz-engine/src/index.ts"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "packages/*/src/**/*"]
 }

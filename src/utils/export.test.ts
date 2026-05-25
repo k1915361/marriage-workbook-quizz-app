@@ -5,9 +5,13 @@ import { QuizResult } from '../types';
 
 // ── Fixture ───────────────────────────────────────────────────────────────
 
+// Build a perfect-score fixture using the actual best-answer data indices so
+// the fixture stays valid regardless of how options are ordered in the data.
+const bestAnswers = questions.map((q) => q.options.findIndex((o) => o.score === 3));
+
 const FIXTURE: QuizResult = {
   version: '1',
-  answers: new Array(questions.length).fill(0), // all best options
+  answers: bestAnswers,
   totalScore: questions.length * 3,
   maxScore: questions.length * 3,
   completedAt: '2026-05-16T21:00:00.000Z',
@@ -53,7 +57,6 @@ describe('formatResultAsText', () => {
 describe('exportResultAsJSON — enriched fields', () => {
   let parsed: Record<string, unknown>;
 
-  // Parse once and reuse across all assertions
   beforeEach(() => {
     parsed = JSON.parse(exportResultAsJSON(FIXTURE)) as Record<string, unknown>;
   });
@@ -81,7 +84,7 @@ describe('exportResultAsJSON — enriched fields', () => {
     expect(breakdown).toHaveLength(questions.length);
   });
 
-  it('each breakdown item has the principle from questions.ts', () => {
+  it('each breakdown item has the principle from questions data', () => {
     const breakdown = parsed['breakdown'] as Record<string, unknown>[];
     questions.forEach((q, i) => {
       expect(breakdown[i]['principle']).toBe(q.principle);
@@ -133,7 +136,12 @@ describe('parseImportJSON', () => {
   });
 
   it('returns null when version field is missing', () => {
-    const bad = JSON.stringify({ answers: [0, 0, 0, 0, 0], totalScore: 15, maxScore: 15, completedAt: '2026-01-01' });
+    const bad = JSON.stringify({
+      answers: new Array(questions.length).fill(0),
+      totalScore: questions.length * 3,
+      maxScore: questions.length * 3,
+      completedAt: '2026-01-01',
+    });
     expect(parseImportJSON(bad)).toBeNull();
   });
 
@@ -153,7 +161,9 @@ describe('parseImportJSON', () => {
   });
 
   it('returns null when answers contains a non-integer', () => {
-    const bad = JSON.stringify({ ...FIXTURE, answers: [0.5, 0, 0, 0, 0] });
+    const answers = [...FIXTURE.answers];
+    answers[0] = 0.5;
+    const bad = JSON.stringify({ ...FIXTURE, answers });
     expect(parseImportJSON(bad)).toBeNull();
   });
 

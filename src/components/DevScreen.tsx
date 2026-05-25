@@ -1,6 +1,7 @@
 import { Component, createSignal, For, Show } from 'solid-js';
 import { Form } from '@msviderok/base-ui-solid/form';
 import { QuizResult } from '../types';
+import { questions } from '../data/questions';
 import { calculateScore, MAX_SCORE } from '../utils/score';
 import { parseImportJSON } from '../utils/export';
 import {
@@ -24,32 +25,22 @@ interface DevScreenProps {
   onStartQuiz: () => void;
 }
 
-const PRESETS: { label: string; tier: string; score: string; answers: number[] }[] = [
-  {
-    label: 'Perfect Score',
-    tier: 'Strong Foundation',
-    score: '15 / 15',
-    answers: [0, 0, 0, 0, 0],
-  },
-  {
-    label: 'Mid Range',
-    tier: 'Growing Together',
-    score: '10 / 15',
-    answers: [1, 1, 1, 1, 1],
-  },
-  {
-    label: 'Low Score',
-    tier: 'Time to Reconnect',
-    score: '5 / 15',
-    answers: [2, 2, 2, 2, 2],
-  },
+const bestAnswers = questions.map((q) => q.options.findIndex((o) => o.score === 3));
+const midAnswers = questions.map((q) => q.options.findIndex((o) => o.score === 2));
+const lowAnswers = questions.map((q) => q.options.findIndex((o) => o.score === 1));
+
+const PRESETS: { label: string; answers: number[] }[] = [
+  { label: 'Perfect Score', answers: bestAnswers },
+  { label: 'Mid Range', answers: midAnswers },
+  { label: 'Low Score', answers: lowAnswers },
 ];
 
 function makeResult(answers: number[]): QuizResult {
+  const score = calculateScore(answers);
   return {
     version: '1',
     answers,
-    totalScore: calculateScore(answers),
+    totalScore: score,
     maxScore: MAX_SCORE,
     completedAt: new Date().toISOString(),
   };
@@ -82,18 +73,22 @@ export const DevScreen: Component<DevScreenProps> = (props) => {
         <SectionLabel class="dev-screen__section-label">Jump to Results - Presets</SectionLabel>
         <div class="dev-screen__presets">
           <For each={PRESETS}>
-            {(preset) => (
-              <OptionCard
-                layout="row"
-                class="dev-screen__preset"
-                onClick={() => props.onJumpToResults(makeResult(preset.answers))}
-              >
-                <OptionCardContent
-                  title={preset.label}
-                  description={`${preset.score} - ${preset.tier}`}
-                />
-              </OptionCard>
-            )}
+            {(preset) => {
+              const result = makeResult(preset.answers);
+              const score = result.totalScore;
+              return (
+                <OptionCard
+                  layout="row"
+                  class="dev-screen__preset"
+                  onClick={() => props.onJumpToResults(result)}
+                >
+                  <OptionCardContent
+                    title={preset.label}
+                    description={`${score} / ${MAX_SCORE}`}
+                  />
+                </OptionCard>
+              );
+            }}
           </For>
         </div>
 

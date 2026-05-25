@@ -3,10 +3,10 @@ import { questions, getScoreFeedback } from '../data/questions';
 import { Form } from '@msviderok/base-ui-solid/form';
 import {
   formatResultAsText,
-  exportResultAsJSON,
-  downloadTextFile,
   copyToClipboard,
   parseImportJSON,
+  openEmailWithResults,
+  downloadResultsAsJSON,
 } from '../utils/export';
 import { QuizResult } from '../types';
 import {
@@ -42,11 +42,9 @@ export const ResultsScreen: Component<ResultsScreenProps> = (props) => {
     setTimeout(() => setCopyLabel('Copy Text'), 2500);
   };
 
-  const handleDownloadJSON = () => {
-    const json = exportResultAsJSON(props.result);
-    const ts = new Date(props.result.completedAt).toISOString().slice(0, 10);
-    downloadTextFile(`quiz-result-${ts}.json`, json, 'application/json');
-  };
+  const handleDownloadJSON = () => downloadResultsAsJSON(props.result);
+
+  const handleEmail = () => openEmailWithResults(props.result);
 
   const handlePrint = () => window.print();
 
@@ -99,6 +97,9 @@ export const ResultsScreen: Component<ResultsScreenProps> = (props) => {
             </OptionCard>
             <OptionCard layout="compact" onClick={handleDownloadJSON}>
               <OptionCardContent title="Download JSON" showArrow={false} />
+            </OptionCard>
+            <OptionCard layout="compact" onClick={handleEmail}>
+              <OptionCardContent title="Email Results" showArrow={false} />
             </OptionCard>
             <OptionCard layout="compact" onClick={handlePrint}>
               <OptionCardContent title="Print" showArrow={false} />

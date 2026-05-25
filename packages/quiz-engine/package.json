@@ -1,0 +1,22 @@
+{
+  "name": "@marriage-workbook/quiz-engine",
+  "version": "1.0.0",
+  "description": "Framework-agnostic quiz engine: types, shuffle, scoring, and export for the 7 Principles quiz",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "marriage",
+    "enrichment",
+    "quiz",
+    "7-principles"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@marriage-workbook/quiz-data": "workspace:*"
+  }
+}

@@ -2,17 +2,22 @@ import { describe, it, expect } from 'vitest';
 import { calculateScore, MAX_SCORE } from '../utils/score';
 import { questions, getScoreFeedback } from '../data/questions';
 
+// Helpers that find the correct data index for each score tier.
+// These are necessary because options are intentionally shuffled in the data
+// so the best answer is not always at position 0.
+const bestAnswers = () => questions.map((q) => q.options.findIndex((o) => o.score === 3));
+const worstAnswers = () => questions.map((q) => q.options.findIndex((o) => o.score === 0));
+const score2Answers = () => questions.map((q) => q.options.findIndex((o) => o.score === 2));
+
 // ── calculateScore ────────────────────────────────────────────────────────
 
 describe('calculateScore', () => {
-  it('returns max score when all best options (index 0) are selected', () => {
-    const perfect = new Array(questions.length).fill(0);
-    expect(calculateScore(perfect)).toBe(MAX_SCORE);
+  it('returns max score when the best option for each question is selected', () => {
+    expect(calculateScore(bestAnswers())).toBe(MAX_SCORE);
   });
 
-  it('returns 0 when all worst options (index 3) are selected', () => {
-    const worst = new Array(questions.length).fill(3);
-    expect(calculateScore(worst)).toBe(0);
+  it('returns 0 when the worst option for each question is selected', () => {
+    expect(calculateScore(worstAnswers())).toBe(0);
   });
 
   it('returns 0 for an all-null (unanswered) array', () => {
@@ -20,15 +25,17 @@ describe('calculateScore', () => {
     expect(calculateScore(unanswered)).toBe(0);
   });
 
-  it('correctly sums mixed answers', () => {
-    // option 1 = score 2 for every question → total 2 × n
-    const mixed = new Array(questions.length).fill(1);
-    expect(calculateScore(mixed)).toBe(2 * questions.length);
+  it('correctly sums answers that all score 2', () => {
+    expect(calculateScore(score2Answers())).toBe(2 * questions.length);
   });
 
   it('skips null entries without throwing', () => {
-    const partial = [0, null, 0, null, 0];
-    // only questions 0, 2, 4 answered with score 3 each → 9
+    // Answer questions 0, 2, 4 with their best option only (3 pts each → 9).
+    const best = bestAnswers();
+    const partial = new Array(questions.length).fill(null);
+    partial[0] = best[0];
+    partial[2] = best[2];
+    partial[4] = best[4];
     expect(calculateScore(partial)).toBe(9);
   });
 
@@ -48,24 +55,24 @@ describe('MAX_SCORE', () => {
 // ── getScoreFeedback ──────────────────────────────────────────────────────
 
 describe('getScoreFeedback', () => {
-  it('returns "Strong Foundation" for a perfect score (15)', () => {
-    expect(getScoreFeedback(15).title).toBe('Strong Foundation');
+  it('returns "Strong Foundation" for a perfect score', () => {
+    expect(getScoreFeedback(MAX_SCORE).title).toBe('Strong Foundation');
   });
 
-  it('returns "Strong Foundation" at the lower boundary (13)', () => {
-    expect(getScoreFeedback(13).title).toBe('Strong Foundation');
+  it('returns "Strong Foundation" at the lower boundary (36)', () => {
+    expect(getScoreFeedback(36).title).toBe('Strong Foundation');
   });
 
-  it('returns "Growing Together" just below Strong boundary (12)', () => {
-    expect(getScoreFeedback(12).title).toBe('Growing Together');
+  it('returns "Growing Together" just below Strong boundary (35)', () => {
+    expect(getScoreFeedback(35).title).toBe('Growing Together');
   });
 
-  it('returns "Growing Together" at the lower boundary (8)', () => {
-    expect(getScoreFeedback(8).title).toBe('Growing Together');
+  it('returns "Growing Together" at the lower boundary (22)', () => {
+    expect(getScoreFeedback(22).title).toBe('Growing Together');
   });
 
-  it('returns "Time to Reconnect" just below Growing boundary (7)', () => {
-    expect(getScoreFeedback(7).title).toBe('Time to Reconnect');
+  it('returns "Time to Reconnect" just below Growing boundary (21)', () => {
+    expect(getScoreFeedback(21).title).toBe('Time to Reconnect');
   });
 
   it('returns "Time to Reconnect" for zero score', () => {
@@ -73,7 +80,7 @@ describe('getScoreFeedback', () => {
   });
 
   it('always returns a non-empty message string', () => {
-    [0, 5, 8, 10, 13, 15].forEach((score) => {
+    [0, 10, 22, 30, 36, MAX_SCORE].forEach((score) => {
       expect(getScoreFeedback(score).message.length).toBeGreaterThan(0);
     });
   });

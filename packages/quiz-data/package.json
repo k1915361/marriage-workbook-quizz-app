@@ -1,0 +1,22 @@
+{
+  "name": "@marriage-workbook/quiz-data",
+  "version": "1.0.0",
+  "description": "Question bank and scoring definitions for The 7 Principles of Creation Marriage Enrichment quiz",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "marriage",
+    "enrichment",
+    "quiz",
+    "7-principles"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}

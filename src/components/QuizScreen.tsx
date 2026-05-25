@@ -1,5 +1,7 @@
 import { Component, For } from 'solid-js';
 import { questions } from '../data/questions';
+import type { ShuffleMap } from '@marriage-workbook/quiz-engine';
+import { dataIndexToDisplayIndex } from '@marriage-workbook/quiz-engine';
 import {
   PageShell,
   Card,
@@ -16,19 +18,33 @@ import {
 interface QuizScreenProps {
   currentQuestionIndex: number;
   userAnswers: (number | null)[];
-  onSelectOption: (index: number) => void;
+  shuffleMap: ShuffleMap;
+  onSelectOption: (displayIndex: number) => void;
   onNext: () => void;
   onPrev: () => void;
 }
 
 export const QuizScreen: Component<QuizScreenProps> = (props) => {
   const q = () => questions[props.currentQuestionIndex];
+
+  // Options displayed in shuffled order for this session.
+  const displayOrder = () => props.shuffleMap[props.currentQuestionIndex] ?? [0, 1, 2, 3];
+  const displayOptions = () => displayOrder().map((dataIdx) => q().options[dataIdx]);
+
+  // Convert the stored data index back to the current display position for
+  // RadioGroup's controlled value.
+  const selectedDisplayIndex = () => {
+    const dataIdx = props.userAnswers[props.currentQuestionIndex];
+    if (dataIdx === null || dataIdx === undefined) return null;
+    return dataIndexToDisplayIndex(displayOrder(), dataIdx);
+  };
+
   const progressPercentage = () => {
     const answered = props.userAnswers.filter((a) => a !== null).length;
     return (answered / questions.length) * 100;
   };
+
   const isAnswered = () => props.userAnswers[props.currentQuestionIndex] !== null;
-  const selectedIndex = () => props.userAnswers[props.currentQuestionIndex];
   const isLast = () => props.currentQuestionIndex === questions.length - 1;
 
   return (
@@ -51,17 +67,17 @@ export const QuizScreen: Component<QuizScreenProps> = (props) => {
         </PageTitle>
 
         <RadioGroup
-          value={selectedIndex() !== null ? selectedIndex()!.toString() : ''}
+          value={selectedDisplayIndex() !== null ? selectedDisplayIndex()!.toString() : ''}
           onChange={(val) => {
             if (val !== '') props.onSelectOption(parseInt(val));
           }}
           class="quiz-screen__radio-group"
         >
-          <For each={q().options}>
-            {(option, index) => (
+          <For each={displayOptions()}>
+            {(option, displayIdx) => (
               <RadioOption
-                value={index().toString()}
-                selected={selectedIndex() === index()}
+                value={displayIdx().toString()}
+                selected={selectedDisplayIndex() === displayIdx()}
                 label={option.text}
               />
             )}

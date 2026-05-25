@@ -7,19 +7,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write   # needed to push the built files to the gh-pages branch
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAGES: 'true'
     steps:
       - uses: actions/checkout@v4
 
@@ -32,23 +28,23 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - uses: actions/configure-pages@v5
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - run: pnpm install --frozen-lockfile
+      # GITHUB_PAGES=true makes scripts/build.mjs set the Vite base path to
+      # /marriage-workbook-quizz-app/ so all asset URLs are repo-relative.
+      # Output lands in dist/ at the repo root.
+      - name: Build
+        run: pnpm run build
+        env:
+          GITHUB_PAGES: 'true'
 
-      - run: pnpm run build
-
-      - uses: actions/upload-pages-artifact@v3
+      # Pushes the contents of dist/ (not dist/ itself) to the root of the
+      # gh-pages branch. GitHub Pages is configured to serve from that branch
+      # at Settings → Pages → Source: "Deploy from a branch" → gh-pages / root.
+      - name: Deploy dist/ to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+          branch: gh-pages
+          folder: dist
+          clean: true
