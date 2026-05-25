@@ -19,23 +19,27 @@ pnpm preview   # serve dist/ locally at http://localhost:4173
 
 ## Deployment — GitHub Pages
 
-The app is deployed to GitHub Pages from the `gh-pages` branch (root).
-
 **GitHub Settings → Pages → Source:** `Deploy from a branch` → `gh-pages` / `(root)`
 
-On every push to `main`, the CI workflow (`.github/workflows/deploy-pages.yml`) builds the app and pushes `dist/` to the `gh-pages` branch automatically.
-
-To build exactly as CI does:
+### Deploy from your machine (recommended — no CI needed)
 
 ```bash
 # macOS / Linux
 GITHUB_PAGES=true pnpm run build
+pnpm run deploy:pages
 
 # Windows PowerShell
 $env:GITHUB_PAGES='true'; pnpm run build
+pnpm run deploy:pages
 ```
 
-See **[GITHUB_PAGES_GUIDE.md](./GITHUB_PAGES_GUIDE.md)** for the full deployment reference — build output location, base path configuration, manual commands, and troubleshooting.
+`deploy:pages` pushes `dist/` contents directly to the `gh-pages` branch via the `gh-pages` package. GitHub Pages serves it automatically. No GitHub Actions minutes required.
+
+### Automated CI (optional)
+
+`.github/workflows/deploy-pages.yml` runs the same two steps on every push to `main`. Requires GitHub Actions to be available on your account.
+
+See **[GITHUB_PAGES_GUIDE.md](./GITHUB_PAGES_GUIDE.md)** for the full reference.
 
 ---
 

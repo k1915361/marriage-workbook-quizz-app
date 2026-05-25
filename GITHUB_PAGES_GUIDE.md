@@ -65,22 +65,42 @@ If you **rename the repository**, update the base string in `scripts/build.mjs`.
 
 ---
 
-## Manual / local commands
+## Deploy from your local machine (no GitHub Actions needed)
+
+This is the recommended way to deploy — it requires no CI minutes and works
+regardless of GitHub account billing status.
 
 ```bash
-# 1. Install all workspace dependencies (including packages/quiz-data, packages/quiz-engine)
+# macOS / Linux — build then push dist/ to gh-pages branch
+GITHUB_PAGES=true pnpm run build
+pnpm run deploy:pages
+
+# Windows PowerShell — two separate commands
+$env:GITHUB_PAGES='true'; pnpm run build
+pnpm run deploy:pages
+```
+
+`pnpm run deploy:pages` runs `gh-pages -d dist`, which:
+1. Takes the contents of `dist/` (not the folder itself)
+2. Commits them to the `gh-pages` branch
+3. Pushes to `origin/gh-pages`
+
+GitHub Pages then serves the updated branch automatically. No workflow, no Actions minutes, no billing.
+
+---
+
+## Other local commands
+
+```bash
+# Install all workspace dependencies
 pnpm install
 
-# 2. Build exactly as CI does (output → dist/)
-GITHUB_PAGES=true pnpm run build          # macOS / Linux
-$env:GITHUB_PAGES='true'; pnpm run build  # Windows PowerShell
-
-# 3. Preview the built output locally (serves at http://localhost:4173)
+# Preview the built output locally (serves at http://localhost:4173)
 pnpm preview
 ```
 
-> `pnpm preview` serves from `dist/` with base `/`, so asset links work locally  
-> even though the deployed site uses the `/marriage-workbook-quizz-app/` base.
+> `pnpm preview` serves with base `/`, so asset links work locally even though  
+> the deployed site uses the `/marriage-workbook-quizz-app/` base path.
 
 ---
 
